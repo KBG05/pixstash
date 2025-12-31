@@ -1,0 +1,24 @@
+version: '3'
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: pixtash_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgres_data/data 
+
+  redis:
+    image: redis:7-alpine
+    container_name: pixtash_redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:
