@@ -38,3 +38,25 @@ func (q *Queries) CreateAsset(ctx context.Context, arg CreateAssetParams) error 
 	)
 	return err
 }
+
+const getAsset = `-- name: GetAsset :one
+SELECT id, user_id, original_name, file_hash, file_size, storage_path, status, created_at, updated_at FROM assets
+WHERE id=$1
+`
+
+func (q *Queries) GetAsset(ctx context.Context, id pgtype.UUID) (Asset, error) {
+	row := q.db.QueryRow(ctx, getAsset, id)
+	var i Asset
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.OriginalName,
+		&i.FileHash,
+		&i.FileSize,
+		&i.StoragePath,
+		&i.Status,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
