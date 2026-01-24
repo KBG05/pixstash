@@ -8,7 +8,7 @@ package database
 import (
 	"context"
 
-	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/google/uuid"
 )
 
 const createAsset = `-- name: CreateAsset :exec
@@ -19,7 +19,7 @@ VALUES ($1, $2, $3, $4, $5, $6)
 `
 
 type CreateAssetParams struct {
-	UserID       pgtype.UUID
+	UserID       uuid.UUID
 	OriginalName string
 	FileHash     string
 	FileSize     int64
@@ -44,7 +44,7 @@ SELECT id, user_id, original_name, file_hash, file_size, storage_path, status, c
 WHERE id=$1
 `
 
-func (q *Queries) GetAsset(ctx context.Context, id pgtype.UUID) (Asset, error) {
+func (q *Queries) GetAsset(ctx context.Context, id uuid.UUID) (Asset, error) {
 	row := q.db.QueryRow(ctx, getAsset, id)
 	var i Asset
 	err := row.Scan(

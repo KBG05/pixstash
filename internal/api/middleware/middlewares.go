@@ -3,6 +3,7 @@
 package middleware
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 	"slices"
@@ -20,20 +21,21 @@ func MiddlewareChain(next http.Handler, m ...Middleware)http.Handler{
 }
 
 func LoggerMiddleware(next http.Handler) http.Handler{
+	start:=time.Now()
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
-		start:=time.Now()
 		var (
 			ip = r.RemoteAddr
 			method=r.Method
 			url=r.URL.String()
 			proto=r.Proto
 		)
-		userAttrs:=slog.Group("user", "ip",ip)
-		requestAttrs:=slog.Group("request", "method", method, "url", url,"proto", proto)
+
 		next.ServeHTTP(w, r)
 		duration:=time.Since(start)
-		time:=slog.Group("time","response time", duration)
-		slog.Info("request received", userAttrs, requestAttrs, time)
-		
+		logLine := fmt.Sprintf("%s %s %s %s %v", ip, proto, method, url, duration)
+
+        // Use the string as the main message
+        slog.Info(logLine)
+	
 	})
 }

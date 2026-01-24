@@ -5,12 +5,13 @@
 package database
 
 import (
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Asset struct {
-	ID           pgtype.UUID
-	UserID       pgtype.UUID
+	ID           uuid.UUID
+	UserID       uuid.UUID
 	OriginalName string
 	FileHash     string
 	FileSize     int64
@@ -21,7 +22,7 @@ type Asset struct {
 }
 
 type User struct {
-	ID        pgtype.UUID
+	ID        uuid.UUID
 	Email     string
 	Password  pgtype.Text
 	CreatedAt pgtype.Timestamp
