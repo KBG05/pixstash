@@ -11,11 +11,12 @@ import (
 	"github.com/google/uuid"
 )
 
-const createAsset = `-- name: CreateAsset :exec
+const createAsset = `-- name: CreateAsset :one
 INSERT INTO assets (
     user_id, original_name, file_hash, file_size, storage_path, status
 )
 VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING id
 `
 
 type CreateAssetParams struct {
@@ -27,8 +28,8 @@ type CreateAssetParams struct {
 	Status       string
 }
 
-func (q *Queries) CreateAsset(ctx context.Context, arg CreateAssetParams) error {
-	_, err := q.db.Exec(ctx, createAsset,
+func (q *Queries) CreateAsset(ctx context.Context, arg CreateAssetParams) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, createAsset,
 		arg.UserID,
 		arg.OriginalName,
 		arg.FileHash,
@@ -36,7 +37,9 @@ func (q *Queries) CreateAsset(ctx context.Context, arg CreateAssetParams) error 
 		arg.StoragePath,
 		arg.Status,
 	)
-	return err
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
 }
 
 const getAsset = `-- name: GetAsset :one

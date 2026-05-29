@@ -21,8 +21,8 @@ func MiddlewareChain(next http.Handler, m ...Middleware)http.Handler{
 }
 
 func LoggerMiddleware(next http.Handler) http.Handler{
-	start:=time.Now()
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
+		start:=time.Now()
 		var (
 			ip = r.RemoteAddr
 			method=r.Method
