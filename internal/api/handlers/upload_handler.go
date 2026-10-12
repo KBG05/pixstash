@@ -34,9 +34,6 @@ func (h *UploadHandler) handle(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-
-
-
 }
 
 
